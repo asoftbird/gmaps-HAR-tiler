@@ -1,5 +1,5 @@
 output/
-downloads/
-HARFILES/
+downloads/*.jpeg
+HARFILES/*.har
 venv/
 *.jpg
