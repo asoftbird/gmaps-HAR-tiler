@@ -4,17 +4,22 @@ import os
 
 cwd = os.getcwd()
 
+def getQueryEntry(query: list, key: str):
+    for entry in query:
+        if entry["name"] == key:
+            return entry["value"]
+
 def buildFilename(query_info):
-    deg = query_info[2]["value"]
-    xcoord = query_info[3]["value"]
-    ycoord = query_info[4]["value"]
-    zcoord = query_info[5]["value"]
+    deg = 0
+    xcoord = int(getQueryEntry(query_info, "x"))
+    ycoord = int(getQueryEntry(query_info, "y"))
+    zcoord = int(getQueryEntry(query_info, "z"))
     filename = f"{deg}_{xcoord}_{ycoord}_{zcoord}"
 
     return filename
 
 
-with open('source.har', 'r', encoding="utf-8") as f:
+with open('.\\HARFILES\\flt.har', 'r', encoding="utf-8") as f:
     har_json = json.loads(f.read())
 
 for i,entry in enumerate(har_json['log']["entries"]):

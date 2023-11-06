@@ -9,32 +9,32 @@ Image.MAX_IMAGE_PIXELS = 933120000
 cwd = os.getcwd()
 tile_dir = cwd + "\\" + "downloads"
 tile_size = 256
-harfile = "nimma_21.har"
+harfile = cwd + "\\" + "HARFILES" + "\\" + "g.har"
 #TODO: make input/output filename an argument
 
 desired_zlevel = 21
-output_image = "nimma_1" + "_" + str(desired_zlevel)
+output_image = "output" + "_" + str(desired_zlevel)
+
+def getQueryEntry(query: list, key: str):
+    for entry in query:
+        if entry["name"] == key:
+            return entry["value"]
+
 
 def buildInitialFilename(query_info):
-    if desired_zlevel == 6:
-        deg = 0
-        xcoord = int(query_info[2]["value"])
-        ycoord = int(query_info[3]["value"])
-        zcoord = int(query_info[4]["value"])
-        filename = f"{deg}_{xcoord}_{ycoord}_{zcoord}"
-
-    else:
-        deg = int(query_info[2]["value"])
-        xcoord = int(query_info[3]["value"])
-        ycoord = int(query_info[4]["value"])
-        zcoord = int(query_info[5]["value"])
-        filename = f"{deg}_{xcoord}_{ycoord}_{zcoord}"
+    deg = 0
+    xcoord = int(getQueryEntry(query_info, "x"))
+    ycoord = int(getQueryEntry(query_info, "y"))
+    zcoord = int(getQueryEntry(query_info, "z"))
+    filename = f"{deg}_{xcoord}_{ycoord}_{zcoord}"
 
     return filename, zcoord
 
 def saveImages(infile, output_directory):
     with open(infile, 'r', encoding="utf-8") as f:
         har_json = json.loads(f.read())
+
+    print("opened json")
 
     for i, entry in enumerate(har_json['log']["entries"]):
         if entry["response"]["content"]["mimeType"].find("image/jpeg") == 0:
@@ -51,10 +51,6 @@ def saveImages(infile, output_directory):
             except KeyError:
                 print("Key not found, skipping")
                 continue
-
-            # except IndexError as e:
-            #     print(f"{e}: skipping")
-            #     continue
 
             if zcoord != desired_zlevel:
                 print("Found image of wrong Z level, skipping")
@@ -77,7 +73,7 @@ def getMinMaxCoordinates(inputdir):
     for filename in os.listdir(inputdir):
         f = os.path.join(inputdir, filename)
 
-        if os.path.isfile(f):
+        if os.path.isfile(f) and filename != ".keep":
             xcoord, ycoord, zcoord = getCoordinates(filename)
             if zcoord == desired_zlevel:
                 x_list.append(xcoord)
