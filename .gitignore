@@ -2,3 +2,4 @@ output/
 downloads/
 HARFILES/
 venv/
+*.jpg
